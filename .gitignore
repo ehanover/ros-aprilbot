@@ -1,3 +1,10 @@
+# ROS packages that happen to be in my workspace
+src/apriltag
+src/roslint
+src/mycamera
+
+*.swp
+
 devel/
 logs/
 build/

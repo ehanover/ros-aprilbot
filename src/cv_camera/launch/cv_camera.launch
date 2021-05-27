@@ -1,0 +1,13 @@
+<!-- Alternatives to this package: video_stream_opencv usb_cam (both are worse/less capable) -->
+
+<launch>
+
+	<!-- Use command "v4l2-ctl -l" to find defaults for any given camera, then adjust from there -->
+	<param name="/webcam/cv_cap_prop_brightness" value="150" type="double" />
+	<param name="/webcam/cv_cap_prop_contrast" value="133" type="double" />
+	<param name="/webcam/cv_cap_prop_saturation" value="128" type="double" />
+
+	<node name="webcam" pkg="cv_camera" type="cv_camera_node" output="screen" />
+
+</launch>
+

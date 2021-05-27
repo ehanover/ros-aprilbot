@@ -1,18 +1,30 @@
 // Modified from http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber
 
+// To test movement with keyboard controller:
+// sudo apt-get install ros-melodic-teleop-twist-keyboard
+// rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+
 #include "ros/ros.h"
 #include "geometry_msgs/Twist.h"
-// #include "std_msgs/String.h
+#include <stdlib.h>
+#include <string>
 
-/**
- * This tutorial demonstrates simple receipt of messages over the ROS system.
- */
+const std::string SETMOTORSPY_LOCATION = "/home/pi/ros-aprilbot/src/motors/src/set_motors.py";
+
+float lval_latest = 0;
+float rval_latest = 0;
 
 void cmdVelCallback(const geometry_msgs::Twist::ConstPtr& msg) {
-  ROS_INFO("I got twist msg: [%f]", msg->linear.x);
+	float lval = msg->linear.x;
+	float aval = msg->angular.z;
+	std::string command = "python3 " + SETMOTORSPY_LOCATION + " " + std::to_string(lval) + " " + std::to_string(aval);
+	// ROS_INFO("Executing command=%s", command);
+	std::cout << "Setting linear=" << lval << ", angular=" << aval << std::endl;
+	system(command.c_str());
 }
 
 int main(int argc, char **argv) {
+	ROS_INFO("motors_node.cpp starting!");
   /**
    * The ros::init() function needs to see argc and argv so that it can perform
    * any ROS arguments and name remapping that were provided at the command line.
@@ -47,7 +59,7 @@ int main(int argc, char **argv) {
    * is the number of messages that will be buffered up before beginning to throw
    * away the oldest ones.
    */
-  ros::Subscriber sub = n.subscribe("cmd_vel", 1, cmdVelCallback);
+  ros::Subscriber sub = n.subscribe("cmd_vel", 5, cmdVelCallback);
 
   /**
    * ros::spin() will enter a loop, pumping callbacks.  With this version, all
