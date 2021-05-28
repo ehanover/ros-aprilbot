@@ -13,9 +13,18 @@ https://wiki.ros.org/ROSberryPi/Installing%20ROS%20Melodic%20on%20the%20Raspberr
   - I think using rosdep can show all system requirements?
   - For opencv, see https://howchoo.com/pi/install-opencv-on-raspberry-pi and/or https://linuxize.com/post/how-to-install-opencv-on-raspberry-pi/. I think it's necessary to include extra modules (for at least 4, maybe 3?)
     - It might be necessary to build both with -DWITH_GTK_2_X=ON in order to avoid rosrun errors?
-    - Don't forget `sudo make install -j4` and `sudo ldconfig` after building
 
 ### Camera
 - Uses the "tagStandard41h12" tags from https://github.com/AprilRobotics/apriltag-imgs
-- Camera must be calibrated (http://wiki.ros.org/camera_calibration/Tutorials/MonocularCalibration)
+- Camera must be calibrated with a checkerboard (http://wiki.ros.org/camera_calibration/)
+  - Required to generate the /webcam/image_rect images that apriltag_ros expects
+
+
+## Running
+
+`
+catkin_make_isolated
+roslaunch main.launch
+???
+`
 

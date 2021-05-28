@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string>
 
-const std::string SETMOTORSPY_LOCATION = "/home/pi/ros-aprilbot/src/motors/src/set_motors.py";
+const std::string SETMOTORSPY_LOCATION = "/home/pi/ros-aprilbot/src/mymotors/src/set_motors.py";
 
 float lval_latest = 0;
 float rval_latest = 0;

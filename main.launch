@@ -1,0 +1,23 @@
+<launch>
+
+	<!-- rviz gives an error about map frame not existing; this line fixes that but doesn't feel like the right solution -->
+	<!-- <node name="tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher" args="0 0 0 0 0 0 map myorigin" /> -->
+
+
+	<!-- Use command "v4l2-ctl -l" to find defaults for any given camera, then adjust from there -->
+	<!--
+	<param name="/webcam/cv_cap_prop_brightness" value="150" type="double" />
+	<param name="/webcam/cv_cap_prop_contrast" value="133" type="double" />
+	<param name="/webcam/cv_cap_prop_saturation" value="128" type="double" />
+	<node name="webcam" pkg="cv_camera" type="cv_camera_node" output="screen" />
+
+	<node name="proc" ns="webcam" pkg="image_proc" type="image_proc" output="screen" />
+
+	<include file="$(find apriltag_ros)/launch/continuous_detection.launch" />
+	-->
+
+
+	<node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(dirname)/map_1.yaml"/>
+
+</launch>
+
