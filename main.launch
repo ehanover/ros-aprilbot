@@ -3,21 +3,32 @@
 	<!-- rviz gives an error about map frame not existing; this line fixes that but doesn't feel like the right solution -->
 	<!-- <node name="tf_broadcaster" pkg="tf2_ros" type="static_transform_publisher" args="0 0 0 0 0 0 map myorigin" /> -->
 
+	<!-- <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(dirname)/map_1.yaml"/> -->
 
-	<!-- Use command "v4l2-ctl -l" to find defaults for any given camera, then adjust from there -->
-	<!--
-	<param name="/webcam/cv_cap_prop_brightness" value="150" type="double" />
-	<param name="/webcam/cv_cap_prop_contrast" value="133" type="double" />
-	<param name="/webcam/cv_cap_prop_saturation" value="128" type="double" />
-	<node name="webcam" pkg="cv_camera" type="cv_camera_node" output="screen" />
+	<node name="camera" pkg="cv_camera" type="cv_camera_node" output="screen" >
+		<param name="camera_info_url" value="file:///home/pi/ros-aprilbot/logitech_C270_calibration.yml" type="string" />
+		
+		<!-- Use command "v4l2-ctl -l" to find defaults for a camera, then adjust from there -->
+		<param name="cv_cap_prop_brightness" value="128" type="double" />
+		<param name="cv_cap_prop_contrast" value="32" type="double" />
+		<param name="cv_cap_prop_saturation" value="32" type="double" />
+	</node>
 
-	<node name="proc" ns="webcam" pkg="image_proc" type="image_proc" output="screen" />
+	<node name="proc" ns="camera" pkg="image_proc" type="image_proc" output="screen" />
 
-	<include file="$(find apriltag_ros)/launch/continuous_detection.launch" />
-	-->
+	<!-- Copied/modified from https://github.com/AprilRobotics/apriltag_ros/blob/master/apriltag_ros/launch/continuous_detection.launch -->
+	<!-- <include file="$(find apriltag_ros)/launch/continuous_detection.launch" /> -->
+	<node pkg="apriltag_ros" type="apriltag_ros_continuous_node" name="apriltag_ros_continuous_node" output="screen">
+		<!-- Remap topics from those used in code to those on the ROS network -->
+		<remap from="image_rect" to="camera/image_rect" />
+		<remap from="camera_info" to="camera/camera_info" />
 
+		<param name="tag_family" value="tag36h11" type="string" />
+		<param name="camera_frame" value="camera" type="string" />
+		<param name="publish_tag_detections_image" type="bool" value="true" /><!-- default: false -->
+		<param name="queue_size" type="int" value="1" />
 
-	<node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(dirname)/map_1.yaml"/>
+		<rosparam command="load" file="$(dirname)/config/tags.yaml"/>
+	</node>
 
 </launch>
-

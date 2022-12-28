@@ -26,13 +26,11 @@ All performed in `~/catkin_ws/`
     - To build a specific package, add on `--pkg packagename`
 
 ### Camera
-- Uses the "tagStandard41h12" tags from https://github.com/AprilRobotics/apriltag-imgs
-- Camera must be calibrated (see http://wiki.ros.org/camera_calibration/)
-  - Used to convert topic /webcam/image_raw to /webcam/image_rect that apriltag_ros needs
+- Uses the "tag36h11" tags from https://github.com/AprilRobotics/apriltag-imgs
+- Camera must be calibrated (see http://wiki.ros.org/camera_calibration/). This allows conversion from topic /camera/image_raw to /camera/image_rect that apriltag_ros needs. 
 
 
 ## Running
-
 - `catkin_make_isolated` and `source setup.sh`
 - `roslaunch main.launch`
 - ???
