@@ -1,9 +1,9 @@
 <launch>
 
-	<node pkg="tf2_ros" type="static_transform_publisher" name="map2odom_broadcaster" args="1 0 0  0 0 0 map odom" />
+	<node pkg="tf2_ros" type="static_transform_publisher" name="map2odom_broadcaster" args="0.2 0.2 0  0 0 0 map odom" />
 	<node pkg="tf2_ros" type="static_transform_publisher" name="base2camera_broadcaster" args="0.1 0 0.05  0 0 0 base_link camera" />
 
-	<node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(dirname)/map_1.yaml"/>
+	<node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find mynavigation)/config/map_1.yaml"/>
 
 	<node pkg="mynavigation" type="mynavigation_node" name="mynavigation_node" output="screen"/>
 
@@ -11,7 +11,7 @@
 	<group if="$(arg video)">
 		<node name="camera" pkg="cv_camera" type="cv_camera_node" output="screen" >
 			<!-- Use command "v4l2-ctl -l" to find defaults for a camera, then adjust from there -->
-			<param name="camera_info_url" value="file:///home/pi/ros-aprilbot/logitech_C270_calibration.yml" type="string" />
+			<param name="camera_info_url" value="$(find mynavigation)/config/logitech_C270_calibration.yml" type="string" />
 			
 			<param name="cv_cap_prop_brightness" value="128" type="double" />
 			<param name="cv_cap_prop_contrast" value="32" type="double" />
@@ -33,7 +33,7 @@
 			<param name="queue_size" type="int" value="1" />
 
 			<!-- Load tag ids and size -->
-			<rosparam command="load" file="$(dirname)/config/tags.yaml"/>
+			<rosparam command="load" file="$(find mynavigation)/config/tags.yaml"/>
 		</node>
 	</group>
 

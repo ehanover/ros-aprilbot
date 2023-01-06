@@ -1,0 +1,9 @@
+# Position is measured from the "map" frame
+
+standalone_tags:
+  [
+    {id: 0, xpos: 0, ypos: 0},
+  ]
+tag_bundles:
+  [
+  ]
