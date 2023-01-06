@@ -36,7 +36,10 @@
 	</group>
 
 	<group if="$(arg navigation)">
-		<node pkg="mynavigation" type="mynavigation_node" name="mynavigation_node" output="screen"/>
+		<rosparam file="$(find mynavigation)/config/tag_positions.yaml" command="load" /> 
+
+		<node pkg="mynavigation" type="mynavigation_localization" name="mynavigation_localization" output="screen" />
+		<node pkg="mynavigation" type="mynavigation_tag_positions" name="mynavigation_tag_positions" output="screen" />
 
 		<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
 			<rosparam file="$(find mynavigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 

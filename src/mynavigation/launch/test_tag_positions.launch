@@ -1,0 +1,8 @@
+<launch>
+
+    <rosparam file="$(find mynavigation)/config/tag_positions.yaml" command="load" /> 
+
+    <!-- <node pkg="mynavigation" type="mynavigation_localization" name="mynavigation_localization" output="screen" /> -->
+    <node pkg="mynavigation" type="mynavigation_tag_positions" name="mynavigation_tag_positions" output="screen" />
+
+</launch>

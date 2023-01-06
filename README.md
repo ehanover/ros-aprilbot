@@ -26,15 +26,16 @@ All performed in `~/catkin_ws/`
 
 ### Camera
 - Uses the "tag36h11" tags from https://github.com/AprilRobotics/apriltag-imgs
-- Camera must be calibrated (see http://wiki.ros.org/camera_calibration/). This converts from topic /camera/image_raw to /camera/image_rect that apriltag_ros needs. 
+- Camera must be calibrated as described in http://wiki.ros.org/camera_calibration/. This converts from topic /camera/image_raw to /camera/image_rect that apriltag_ros needs. 
 
 
 ## ROS Nodes
 - **mymotors/motor_controller**: subscribes to /cmd_vel that's generated from the ROS navigation stack and moves the robot accordingly
 - **mynavigation/localizer**: subscribes to /tag_detections and /cmd_vel and combines them to calculate predicted robot position 
+- **mynavigation/tag_positions**: publishes positions of the apriltags to be displayed in rviz
 
 
 ## Running
 - `catkin_make_isolated` and `source setup.sh`
-- `roslaunch main.launch`
-- ???
+- `roslaunch mynavigation main.launch video:=true navigation:=true`
+- Use rviz to set a navigation goal
