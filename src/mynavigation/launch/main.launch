@@ -5,8 +5,6 @@
 
 	<node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find mynavigation)/config/map_1.yaml"/>
 
-	<node pkg="mynavigation" type="mynavigation_node" name="mynavigation_node" output="screen"/>
-
 	
 	<group if="$(arg video)">
 		<node name="camera" pkg="cv_camera" type="cv_camera_node" output="screen" >
@@ -34,6 +32,19 @@
 
 			<!-- Load tag ids and size -->
 			<rosparam command="load" file="$(find mynavigation)/config/tags.yaml"/>
+		</node>
+	</group>
+
+	<group if="$(arg navigation)">
+		<node pkg="mynavigation" type="mynavigation_node" name="mynavigation_node" output="screen"/>
+
+		<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+			<rosparam file="$(find mynavigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+			<rosparam file="$(find mynavigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+			<rosparam file="$(find mynavigation)/config/local_costmap_params.yaml" command="load" />
+			<rosparam file="$(find mynavigation)/config/global_costmap_params.yaml" command="load" /> 
+			<rosparam file="$(find mynavigation)/config/move_base_params.yaml" command="load" /> 
+			<rosparam file="$(find mynavigation)/config/base_local_planner_params.yaml" command="load" />
 		</node>
 	</group>
 
