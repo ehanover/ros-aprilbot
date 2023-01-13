@@ -35,7 +35,7 @@ visualization_msgs::Marker constructMarker(const XmlRpc::XmlRpcValue& value) {
 
   // Set the scale of the marker in meters
   marker.scale.x = 0.1;
-  marker.scale.y = 0.03;
+  marker.scale.y = 0.02;
   marker.scale.z = 0.1;
 
   // Set the color -- be sure to set alpha to something non-zero!

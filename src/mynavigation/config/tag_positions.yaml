@@ -1,11 +1,11 @@
 # Position is measured from the "map" frame
 # Units are meters and radians
+# ALL POSITION VALUES MUST HAVE DECIMAL POINTS, IE 42.0 NOT JUST 42
 
 tag_positions:
   standalone_tags:
     [
-      {id: 0, xpos: 2.0, ypos: 2.0, zpos: 1.0, yaw: 0.0},
-      {id: 1, xpos: 1.5, ypos: 3.0, zpos: 1.0, yaw: 2.9},
+      {id: 0, xpos: 0.205, ypos: 0.0, zpos: 0.27, yaw: 1.571},
     ]
   tag_bundles:
     [
