@@ -1,7 +1,9 @@
+#include <apriltag_ros/AprilTagDetectionArray.h>
 #include <ros/ros.h>
 #include <nav_msgs/Odometry.h>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h> // used to convert tf2::Quaternion to geometry_msgs::Quaternion
 #include <geometry_msgs/Twist.h>
 #include <cmath>
@@ -13,6 +15,9 @@ geometry_msgs::TransformStamped currentPosition;
 float currentYaw = 0; // RPY needs to be separated because TransformStamped only stores quaternion rotation
 nav_msgs::Odometry currentOdom;
 ros::Time lastUpdateTime;
+
+// tf2_ros::Buffer tfBuffer;
+// tf2_ros::TransformListener tfListener(tfBuffer);
 
 void updateCurrentPosition() {
   ros::Time currentTime = ros::Time::now();
@@ -45,8 +50,48 @@ void cmdVelCallback(const geometry_msgs::Twist& msg){
   lastCommand = msg;
 }
 
+void tagDetectionsCallback(const apriltag_ros::AprilTagDetectionArray& msg) {
+  float avgX = 0;
+  float avgY = 0;
+
+  std::string frame_id = msg.header.frame_id;
+  int count = msg.detections.size();
+  for(int i=0; i<count; i++) {
+    // AprilTagDetectionArray -> AprilTagDetection -> PoseWithCovarianceStamped -> PoseWithCovariance -> Pose
+    int id = msg.detections[i].id[0];
+    geometry_msgs::Pose originalPose = msg.detections[i].pose.pose.pose;
+    geometry_msgs::PointStamped originalPointStamped;
+    originalPointStamped.header.frame_id = frame_id;
+    originalPointStamped.point = originalPose.position;
+    ROS_INFO("Got detections (#%d): f=%s, id=%d, p=(%f, %f, %f)", i, frame_id, id, originalPointStamped.point.x, originalPointStamped.point.y, originalPointStamped.point.z);
+
+    // Convert detected tag position to odom frame
+    geometry_msgs::PointStamped newPointStamped;
+    // tfBuffer.transform(originalPointStamped, newPointStamped, "odom");
+    // Other method of transforming: 
+    // geometry_msgs::TransformStamped transformStamped = tfBuffer.lookupTransform(frame_id, "odom", ros::Time::now());
+    // tf2::doTransform();
+    ROS_INFO("  transformed=(%f, %f, %f)", i, frame_id, id, newPointStamped.point.x, newPointStamped.point.y, newPointStamped.point.z);
+
+    // Convert config tag position to odom frame
+
+    // Perform vector arithmetic: robot = detected - actual
+
+
+    avgX += newPointStamped.point.x;
+    avgY += newPointStamped.point.y;
+  }
+
+  avgX /= count;
+  avgY /= count;
+
+  currentPosition.transform.translation.x = avgX;
+  currentPosition.transform.translation.y = avgY;
+}
+
+
 int main(int argc, char** argv){
-  ros::init(argc, argv, "localizer_node");
+  ros::init(argc, argv, "localization_node");
 
   lastCommand.linear.x = 0;
   lastCommand.angular.z = 0;
@@ -79,17 +124,18 @@ int main(int argc, char** argv){
 
   ros::NodeHandle nodeHandle;
 
-  ros::Subscriber sub = nodeHandle.subscribe("/cmd_vel", 10, &cmdVelCallback); // queue size
-  tf2_ros::TransformBroadcaster broadcaster;
-  ros::Publisher publisher = nodeHandle.advertise<nav_msgs::Odometry>("odom", 10); // queue size
+  ros::Subscriber cmdVelSub = nodeHandle.subscribe("/cmd_vel", 0, &cmdVelCallback); // queue size
+  ros::Subscriber tagDetectionsSub = nodeHandle.subscribe("/tag_detections", 0, &tagDetectionsCallback);
+  tf2_ros::TransformBroadcaster transformBroadcaster;
+  ros::Publisher odomPublisher = nodeHandle.advertise<nav_msgs::Odometry>("odom", 10);
 
   ROS_INFO("Subscribed to /cmd_vel, starting to broadcast+publish in loop");
 
   ros::Rate loop_rate(20);
   while (ros::ok()) {
     updateCurrentPosition();
-    broadcaster.sendTransform(currentPosition);
-    publisher.publish(currentOdom);
+    transformBroadcaster.sendTransform(currentPosition);
+    odomPublisher.publish(currentOdom);
 
     ros::spinOnce();
     loop_rate.sleep();
