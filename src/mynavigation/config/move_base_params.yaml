@@ -1,4 +1,4 @@
-controller_frequency: 7
+controller_frequency: 5
 
 # Disable recovery because obstacles will never get cleared due to the robot setup
 recovery_behavior_enabled: false

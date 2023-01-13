@@ -10,6 +10,8 @@
 		<node name="camera" pkg="cv_camera" type="cv_camera_node" output="screen" >
 			<!-- Use command "v4l2-ctl -l" to find defaults for a camera, then adjust from there -->
 			<param name="camera_info_url" value="$(find mynavigation)/config/logitech_C270_calibration.yml" type="string" />
+			<param name="frame_id" value="camera" type="string" />
+			<param name="rate" value="20" type="int" />
 			
 			<param name="cv_cap_prop_brightness" value="128" type="double" />
 			<param name="cv_cap_prop_contrast" value="32" type="double" />
@@ -27,7 +29,7 @@
 
 			<param name="tag_family" value="tag36h11" type="string" />
 			<param name="camera_frame" value="camera" type="string" />
-			<param name="publish_tag_detections_image" type="bool" value="false" />
+			<param name="publish_tag_detections_image" type="bool" value="true" />
 			<param name="queue_size" type="int" value="1" />
 
 			<!-- Load tag ids and size -->
@@ -35,11 +37,8 @@
 		</node>
 	</group>
 
-	<group if="$(arg navigation)">
-		<rosparam file="$(find mynavigation)/config/tag_positions.yaml" command="load" /> 
 
-		<node pkg="mynavigation" type="mynavigation_localization" name="mynavigation_localization" output="screen" />
-		<node pkg="mynavigation" type="mynavigation_tag_positions" name="mynavigation_tag_positions" output="screen" />
+	<group if="$(arg navigation)">
 
 		<node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
 			<rosparam file="$(find mynavigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
@@ -50,5 +49,9 @@
 			<rosparam file="$(find mynavigation)/config/base_local_planner_params.yaml" command="load" />
 		</node>
 	</group>
+
+	<rosparam file="$(find mynavigation)/config/tag_positions.yaml" command="load" /> 
+	<node pkg="mynavigation" type="mynavigation_localization" name="mynavigation_localization" output="screen" />
+	<node pkg="mynavigation" type="mynavigation_tag_positions" name="mynavigation_tag_positions" output="screen" />
 
 </launch>
